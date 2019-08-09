@@ -1,7 +1,7 @@
-"""Utilities that are required by gplearn.
+"""Utilities that are required by gplearn2.
 
 Most of these functions are slightly modified versions of some key utility
-functions from scikit-learn that gplearn depends upon. They reside here in
+functions from scikit-learn that gplearn2 depends upon. They reside here in
 order to maintain compatibility across different versions of scikit-learn.
 
 """

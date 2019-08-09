@@ -1,6 +1,6 @@
 """Testing the Genetic Programming module's underlying datastructure
-(gplearn.genetic._Program) as well as the classes that use it,
-gplearn.genetic.SymbolicRegressor and gplearn.genetic.SymbolicTransformer."""
+(gplearn2.genetic._Program) as well as the classes that use it,
+gplearn2.genetic.SymbolicRegressor and gplearn2.genetic.SymbolicTransformer."""
 
 # Author: Trevor Stephens <trevorstephens.com>
 #
@@ -25,16 +25,16 @@ from sklearn.utils.testing import assert_array_equal, assert_array_almost_equal
 from sklearn.utils.testing import assert_raises, assert_warns
 from sklearn.utils.validation import check_random_state
 
-from gplearn.genetic import SymbolicClassifier, SymbolicRegressor
-from gplearn.genetic import SymbolicTransformer
-from gplearn.fitness import weighted_pearson, weighted_spearman
-from gplearn._program import _Program
-from gplearn.fitness import _fitness_map
-from gplearn.functions import (add2, sub2, mul2, div2, sqrt1, log1, abs1, max2,
-                               min2)
-from gplearn.functions import _Function
-from gplearn.tests.check_estimator import custom_check_estimator
-from gplearn.tests.check_estimator import rewritten_check_estimator
+from gplearn2.genetic import SymbolicClassifier, SymbolicRegressor
+from gplearn2.genetic import SymbolicTransformer
+from gplearn2.fitness import weighted_pearson, weighted_spearman
+from gplearn2._program import _Program
+from gplearn2.fitness import _fitness_map
+from gplearn2.functions import (add2, sub2, mul2, div2, sqrt1, log1, abs1, max2,
+                                min2)
+from gplearn2.functions import _Function
+from gplearn2.tests.check_estimator import custom_check_estimator
+from gplearn2.tests.check_estimator import rewritten_check_estimator
 
 # load the boston dataset and randomly permute it
 rng = check_random_state(0)

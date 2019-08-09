@@ -1,7 +1,7 @@
 """The functions used to create programs.
 
-The :mod:`gplearn.functions` module contains all of the functions used by
-gplearn programs. It also contains helper methods for a user to define their
+The :mod:`gplearn2.functions` module contains all of the functions used by
+gplearn2 programs. It also contains helper methods for a user to define their
 own custom functions.
 """
 
@@ -104,7 +104,7 @@ def make_function(function, name, arity, wrap=True):
 
     # Check closure for zero & negative input arguments
     args = [np.zeros(10) for _ in range(arity)]
-    if not np.all(np.isinf(function(*args))):
+    if np.any(np.isinf(function(*args))):
         raise ValueError('supplied function %s does not have closure against '
                          'zeros in argument vectors.' % name)
     args = [-1 * np.ones(10) for _ in range(arity)]

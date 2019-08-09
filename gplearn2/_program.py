@@ -1,8 +1,8 @@
-"""The underlying data structure used in gplearn.
+"""The underlying data structure used in gplearn2.
 
-The :mod:`gplearn._program` module contains the underlying representation of a
+The :mod:`gplearn2._program` module contains the underlying representation of a
 computer program. It is used for creating and evolving programs used in the
-:mod:`gplearn.genetic` module.
+:mod:`gplearn2.genetic` module.
 """
 
 # Author: Trevor Stephens <trevorstephens.com>
@@ -23,7 +23,7 @@ class _Program(object):
     """A program-like representation of the evolved program.
 
     This is the underlying data-structure used by the public classes in the
-    :mod:`gplearn.genetic` module. It should not be used directly by the user.
+    :mod:`gplearn2.genetic` module. It should not be used directly by the user.
 
     Parameters
     ----------

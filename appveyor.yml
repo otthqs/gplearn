@@ -15,4 +15,4 @@ install:
   - python setup.py install
 
 test_script:
-  - pytest -v gplearn
+  - pytest -v gplearn2

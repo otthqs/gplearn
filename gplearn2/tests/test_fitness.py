@@ -12,9 +12,9 @@ from sklearn.metrics import mean_absolute_error
 from sklearn.utils.testing import assert_equal, assert_raises
 from sklearn.utils.validation import check_random_state
 
-from gplearn.genetic import SymbolicRegressor, SymbolicClassifier
-from gplearn.genetic import SymbolicTransformer
-from gplearn.fitness import make_fitness, _mean_square_error
+from gplearn2.genetic import SymbolicRegressor, SymbolicClassifier
+from gplearn2.genetic import SymbolicTransformer
+from gplearn2.fitness import make_fitness, _mean_square_error
 
 # load the breast cancer dataset and randomly permute it
 cancer = load_breast_cancer()

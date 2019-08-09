@@ -1,7 +1,7 @@
 """Metrics to evaluate the fitness of a program.
 
-The :mod:`gplearn.fitness` module contains some metric with which to evaluate
-the computer programs created by the :mod:`gplearn.genetic` module.
+The :mod:`gplearn2.fitness` module contains some metric with which to evaluate
+the computer programs created by the :mod:`gplearn2.genetic` module.
 """
 
 # Author: Trevor Stephens <trevorstephens.com>

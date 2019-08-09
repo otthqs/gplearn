@@ -7,7 +7,7 @@
 import numpy as np
 from sklearn.utils.testing import assert_raises
 
-from gplearn.utils import _get_n_jobs, check_random_state, cpu_count
+from gplearn2.utils import _get_n_jobs, check_random_state, cpu_count
 
 
 def test_check_random_state():

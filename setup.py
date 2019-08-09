@@ -3,12 +3,12 @@
 """Genetic Programming in Python, with a scikit-learn inspired API"""
 
 from setuptools import setup, find_packages
-import gplearn
+import gplearn2
 
 DESCRIPTION = __doc__
-VERSION = gplearn.__version__
+VERSION = gplearn2.__version__
 
-setup(name='gplearn',
+setup(name='gplearn2',
       version=VERSION,
       description=DESCRIPTION,
       long_description=open("README.rst").read(),
