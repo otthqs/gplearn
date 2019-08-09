@@ -104,7 +104,7 @@ def make_function(function, name, arity, wrap=True):
 
     # Check closure for zero & negative input arguments
     args = [np.zeros(10) for _ in range(arity)]
-    if not np.all(np.isfinite(function(*args))):
+    if not np.all(np.isinf(function(*args))):
         raise ValueError('supplied function %s does not have closure against '
                          'zeros in argument vectors.' % name)
     args = [-1 * np.ones(10) for _ in range(arity)]
