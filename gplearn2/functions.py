@@ -89,28 +89,28 @@ def make_function(function, name, arity, wrap=True):
         raise ValueError('wrap must be an bool, got %s' % type(wrap))
 
     # Check output shape
-    args = [np.ones(10) for _ in range(arity)]
-    try:
-        function(*args)
-    except ValueError:
-        raise ValueError('supplied function %s does not support arity of %d.'
-                         % (name, arity))
-    if not hasattr(function(*args), 'shape'):
-        raise ValueError('supplied function %s does not return a numpy array.'
-                         % name)
-    if function(*args).shape != (10,):
-        raise ValueError('supplied function %s does not return same shape as '
-                         'input vectors.' % name)
-
-    # Check closure for zero & negative input arguments
-    args = [np.zeros(10) for _ in range(arity)]
-    if np.any(np.isinf(function(*args))):
-        raise ValueError('supplied function %s does not have closure against '
-                         'zeros in argument vectors.' % name)
-    args = [-1 * np.ones(10) for _ in range(arity)]
-    if not np.all(np.isfinite(function(*args))):
-        raise ValueError('supplied function %s does not have closure against '
-                         'negatives in argument vectors.' % name)
+    # args = [np.ones(10) for _ in range(arity)]
+    # try:
+    #     function(*args)
+    # except ValueError:
+    #     raise ValueError('supplied function %s does not support arity of %d.'
+    #                      % (name, arity))
+    # if not hasattr(function(*args), 'shape'):
+    #     raise ValueError('supplied function %s does not return a numpy array.'
+    #                      % name)
+    # if function(*args).shape != (10,):
+    #     raise ValueError('supplied function %s does not return same shape as '
+    #                      'input vectors.' % name)
+    #
+    # # Check closure for zero & negative input arguments
+    # args = [np.zeros(10) for _ in range(arity)]
+    # if np.any(np.isinf(function(*args))):
+    #     raise ValueError('supplied function %s does not have closure against '
+    #                      'zeros in argument vectors.' % name)
+    # args = [-1 * np.ones(10) for _ in range(arity)]
+    # if not np.all(np.isfinite(function(*args))):
+    #     raise ValueError('supplied function %s does not have closure against '
+    #                      'negatives in argument vectors.' % name)
 
     if wrap:
         return _Function(function=wrap_non_picklable_objects(function),

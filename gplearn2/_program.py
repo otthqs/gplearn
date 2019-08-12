@@ -122,6 +122,7 @@ class _Program(object):
 
     def __init__(self,
                  function_set,
+                 feature_function_set,
                  arities,
                  init_depth,
                  init_method,
@@ -136,6 +137,7 @@ class _Program(object):
                  program=None):
 
         self.function_set = function_set
+        self.feature_function_set = feature_function_set
         self.arities = arities
         self.init_depth = (init_depth[0], init_depth[1] + 1)
         self.init_method = init_method
@@ -216,7 +218,7 @@ class _Program(object):
                 while terminal_stack[-1] == 0:
                     terminal_stack.pop()
                     if not terminal_stack:
-                        return program
+                        return self.post_pruning(program)
                     terminal_stack[-1] -= 1
 
         # We should never get here
@@ -359,7 +361,10 @@ class _Program(object):
         if isinstance(node, float):
             return np.repeat(node, X.shape[0])
         if isinstance(node, int):
-            return X[:, node]
+            try:
+                return X[:, node]
+            except:
+                return np.repeat(node, X.shape[0])
 
         apply_stack = []
 
@@ -374,9 +379,18 @@ class _Program(object):
             while len(apply_stack[-1]) == apply_stack[-1][0].arity + 1:
                 # Apply functions that have sufficient arguments
                 function = apply_stack[-1][0]
-                terminals = [np.repeat(t, X.shape[0]) if isinstance(t, float)
-                             else X[:, t] if isinstance(t, int)
-                             else t for t in apply_stack[-1][1:]]
+                if function in self.feature_function_set:
+                    terminals = [np.repeat(t, X.shape[0]) if isinstance(t, float)
+                                 else X[:, t] if (isinstance(t, int) and t < X.shape[1])
+                                 else X[:, np.random.randint(0, X.shape[1])] if (isinstance(t, int) and t >= X.shape[1])
+                                 else t for t in apply_stack[-1][1:-1]]
+                    terminals.append(int(apply_stack[-1][-1]))
+
+                else:
+                    terminals = [np.repeat(t, X.shape[0]) if isinstance(t, float)
+                                 else X[:, t] if (isinstance(t, int) and t < X.shape[1])
+                                 else X[:, np.random.randint(0, X.shape[1])] if (isinstance(t, int) and t >= X.shape[1])
+                                 else t for t in apply_stack[-1][1:]]
                 intermediate_result = function(*terminals)
                 if len(apply_stack) != 1:
                     apply_stack.pop()
@@ -486,6 +500,46 @@ class _Program(object):
         penalty = parsimony_coefficient * len(self.program) * self.metric.sign
         return self.raw_fitness_ - penalty
 
+
+    def post_pruning(self, program = None):
+        if program is None:
+            program = self.program
+
+        for i in range(len(program)):
+            if i < len(program):
+                if program[i] in self.feature_function_set:
+                    stack = 1
+                    start, end = i, i
+
+                    while stack > end - start:
+                        temp_node = program[end]
+                        if isinstance(temp_node, _Function):
+                            stack += temp_node.arity
+                        end += 1
+
+                    temp_arity = []
+                    temp_program = []
+                    for j in range(start, end):
+                        temp_program.append(program[j])
+
+                        if isinstance(program[j], _Function):
+                            temp_arity.append(program[j].arity)
+
+                        else:
+                            temp_arity[-1] -= 1
+                            while temp_arity[-1] == 0:
+                                temp_arity.pop()
+                                temp_arity[-1] -= 1
+
+                        if temp_arity[0] == 1:
+                            temp_program.append(np.random.randint(1,21))
+                            program = program[:start] + temp_program + program[end:]
+                            break
+            else: break
+        return program
+
+
+
     def get_subtree(self, random_state, program=None):
         """Get a random subtree from the program.
 
@@ -556,9 +610,9 @@ class _Program(object):
         donor_removed = list(set(range(len(donor))) -
                              set(range(donor_start, donor_end)))
         # Insert genetic material from donor
-        return (self.program[:start] +
+        return self.post_pruning((self.program[:start] +
                 donor[donor_start:donor_end] +
-                self.program[end:]), removed, donor_removed
+                self.program[end:])), removed, donor_removed
 
     def subtree_mutation(self, random_state):
         """Perform the subtree mutation operation on the program.
@@ -584,7 +638,7 @@ class _Program(object):
         # Build a new naive program
         chicken = self.build_program(random_state)
         # Do subtree mutation via the headless chicken method!
-        return self.crossover(chicken, random_state)
+        return self.post_pruning(self.crossover(chicken, random_state))
 
     def hoist_mutation(self, random_state):
         """Perform the hoist mutation operation on the program.
@@ -614,7 +668,7 @@ class _Program(object):
         # Determine which nodes were removed for plotting
         removed = list(set(range(start, end)) -
                        set(range(start + sub_start, start + sub_end)))
-        return self.program[:start] + hoist + self.program[end:], removed
+        return self.post_pruning(self.program[:start] + hoist + self.program[end:]), removed
 
     def point_mutation(self, random_state):
         """Perform the point mutation operation on the program.
@@ -663,7 +717,7 @@ class _Program(object):
                                          'const_range=None.')
                 program[node] = terminal
 
-        return program, list(mutate)
+        return self.post_pruning(program), list(mutate)
 
     depth_ = property(_depth)
     length_ = property(_length)
