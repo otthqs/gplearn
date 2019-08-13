@@ -123,6 +123,8 @@ class _Program(object):
     def __init__(self,
                  function_set,
                  feature_function_set,
+                 reshape_function_set,
+                 rows,
                  arities,
                  init_depth,
                  init_method,
@@ -138,6 +140,8 @@ class _Program(object):
 
         self.function_set = function_set
         self.feature_function_set = feature_function_set
+        self.reshape_function_set = reshape_function_set
+        self.rows = rows
         self.arities = arities
         self.init_depth = (init_depth[0], init_depth[1] + 1)
         self.init_method = init_method
@@ -386,6 +390,10 @@ class _Program(object):
                     terminals = [np.repeat(t, X.shape[0]) if isinstance(t, float)
                                  else X[:, t] if isinstance(t, int)
                                  else t for t in apply_stack[-1][1:]]
+
+                if function in self.reshape_function_set:
+                    terminals.append(int(self.rows))
+
                 intermediate_result = function(*terminals)
                 if len(apply_stack) != 1:
                     apply_stack.pop()
