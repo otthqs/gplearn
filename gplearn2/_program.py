@@ -361,10 +361,7 @@ class _Program(object):
         if isinstance(node, float):
             return np.repeat(node, X.shape[0])
         if isinstance(node, int):
-            try:
-                return X[:, node]
-            except:
-                return np.repeat(node, X.shape[0])
+            return X[:, node]
 
         apply_stack = []
 
@@ -381,15 +378,13 @@ class _Program(object):
                 function = apply_stack[-1][0]
                 if function in self.feature_function_set:
                     terminals = [np.repeat(t, X.shape[0]) if isinstance(t, float)
-                                 else X[:, t] if (isinstance(t, int) and t < X.shape[1])
-                                 else X[:, np.random.randint(0, X.shape[1])] if (isinstance(t, int) and t >= X.shape[1])
+                                 else X[:, t] if isinstance(t, int)
                                  else t for t in apply_stack[-1][1:-1]]
                     terminals.append(int(apply_stack[-1][-1]))
 
                 else:
                     terminals = [np.repeat(t, X.shape[0]) if isinstance(t, float)
-                                 else X[:, t] if (isinstance(t, int) and t < X.shape[1])
-                                 else X[:, np.random.randint(0, X.shape[1])] if (isinstance(t, int) and t >= X.shape[1])
+                                 else X[:, t] if isinstance(t, int)
                                  else t for t in apply_stack[-1][1:]]
                 intermediate_result = function(*terminals)
                 if len(apply_stack) != 1:
@@ -532,7 +527,7 @@ class _Program(object):
                                 temp_arity[-1] -= 1
 
                         if temp_arity[0] == 1:
-                            temp_program.append(np.random.randint(1,21))
+                            temp_program.append(float(np.random.randint(1,21)))
                             program = program[:start] + temp_program + program[end:]
                             break
             else: break
