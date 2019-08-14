@@ -42,8 +42,6 @@ def _parallel_evolve(n_programs, parents, X, y, sample_weight, seeds, params):
     tournament_size = params['tournament_size']
     function_set = params['function_set']
     feature_function_set = params['feature_function_set']
-    reshape_function_set = params['reshape_function_set']
-    rows = params['rows']
     arities = params['arities']
     init_depth = params['init_depth']
     init_method = params['init_method']
@@ -120,8 +118,6 @@ def _parallel_evolve(n_programs, parents, X, y, sample_weight, seeds, params):
         program = _Program(function_set=function_set,
                            arities=arities,
                            feature_function_set=feature_function_set,
-                           reshape_function_set=reshape_function_set,
-                           rows=rows,
                            init_depth=init_depth,
                            init_method=init_method,
                            n_features=n_features,
@@ -182,8 +178,6 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
                  init_method='half and half',
                  function_set=('add', 'sub', 'mul', 'div'),
                  feature_function_set = [],
-                 reshape_function_set = [],
-                 rows = None,
                  transformer=None,
                  metric='mean absolute error',
                  parsimony_coefficient=0.001,
@@ -212,8 +206,6 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
         self.init_method = init_method
         self.function_set = function_set
         self.feature_function_set = feature_function_set
-        self.reshape_function_set = reshape_function_set
-        self.rows = rows
         self.transformer = transformer
         self.metric = metric
         self.parsimony_coefficient = parsimony_coefficient
@@ -436,8 +428,6 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
             params['_transformer'] = None
         params['function_set'] = self._function_set
         params['feature_function_set'] = self.feature_function_set
-        params['reshape_function_set'] = self.reshape_function_set
-        params['rows'] = self.rows
         params['arities'] = self._arities
         params['method_probs'] = self._method_probs
 
@@ -1411,8 +1401,6 @@ class SymbolicTransformer(BaseSymbolic, TransformerMixin):
                  init_method='half and half',
                  function_set=('add', 'sub', 'mul', 'div'),
                  feature_function_set = [],
-                 reshape_function_set = [],
-                 rows = None,
                  metric='pearson',
                  parsimony_coefficient=0.001,
                  p_crossover=0.9,
@@ -1439,8 +1427,6 @@ class SymbolicTransformer(BaseSymbolic, TransformerMixin):
             init_method=init_method,
             function_set=function_set,
             feature_function_set = feature_function_set,
-            reshape_function_set = reshape_function_set,
-            rows = rows,
             metric=metric,
             parsimony_coefficient=parsimony_coefficient,
             p_crossover=p_crossover,
