@@ -89,10 +89,10 @@ def make_fitness(function, greater_is_better, wrap=True):
     if function.__code__.co_argcount != 3:
         raise ValueError('function requires 3 arguments (y, y_pred, w),'
                          ' got %d.' % function.__code__.co_argcount)
-    if not isinstance(function(np.array([1, 1]),
-                      np.array([2, 2]),
-                      np.array([1, 1])), numbers.Number):
-        raise ValueError('function must return a numeric.')
+    # if not isinstance(function(np.array([1, 1]),
+    #                   np.array([2, 2]),
+    #                   np.array([1, 1])), numbers.Number):
+    #     raise ValueError('function must return a numeric.')
 
     if wrap:
         return _Fitness(function=wrap_non_picklable_objects(function),
