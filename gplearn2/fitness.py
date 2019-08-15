@@ -86,9 +86,9 @@ def make_fitness(function, greater_is_better, wrap=True):
                          % type(greater_is_better))
     if not isinstance(wrap, bool):
         raise ValueError('wrap must be an bool, got %s' % type(wrap))
-    if function.__code__.co_argcount != 3:
-        raise ValueError('function requires 3 arguments (y, y_pred, w),'
-                         ' got %d.' % function.__code__.co_argcount)
+    # if function.__code__.co_argcount != 3:
+    #     raise ValueError('function requires 3 arguments (y, y_pred, w),'
+    #                      ' got %d.' % function.__code__.co_argcount)
     # if not isinstance(function(np.array([1, 1]),
     #                   np.array([2, 2]),
     #                   np.array([1, 1])), numbers.Number):
@@ -101,7 +101,7 @@ def make_fitness(function, greater_is_better, wrap=True):
                     greater_is_better=greater_is_better)
 
 
-def _weighted_pearson(y, y_pred, w):
+def _weighted_pearson(y, y_pred, w, mask):
     """Calculate the weighted Pearson correlation coefficient."""
     with np.errstate(divide='ignore', invalid='ignore'):
         y_pred_demean = y_pred - np.average(y_pred, weights=w)
@@ -115,29 +115,29 @@ def _weighted_pearson(y, y_pred, w):
     return 0.
 
 
-def _weighted_spearman(y, y_pred, w):
+def _weighted_spearman(y, y_pred, w, mask):
     """Calculate the weighted Spearman correlation coefficient."""
     y_pred_ranked = np.apply_along_axis(rankdata, 0, y_pred)
     y_ranked = np.apply_along_axis(rankdata, 0, y)
     return _weighted_pearson(y_pred_ranked, y_ranked, w)
 
 
-def _mean_absolute_error(y, y_pred, w):
+def _mean_absolute_error(y, y_pred, w, mask):
     """Calculate the mean absolute error."""
     return np.average(np.abs(y_pred - y), weights=w)
 
 
-def _mean_square_error(y, y_pred, w):
+def _mean_square_error(y, y_pred, w, mask):
     """Calculate the mean square error."""
     return np.average(((y_pred - y) ** 2), weights=w)
 
 
-def _root_mean_square_error(y, y_pred, w):
+def _root_mean_square_error(y, y_pred, w, mask):
     """Calculate the root mean square error."""
     return np.sqrt(np.average(((y_pred - y) ** 2), weights=w))
 
 
-def _log_loss(y, y_pred, w):
+def _log_loss(y, y_pred, w, mask):
     """Calculate the log loss."""
     eps = 1e-15
     inv_y_pred = np.clip(1 - y_pred, eps, 1 - eps)
