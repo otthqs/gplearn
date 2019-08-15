@@ -312,7 +312,7 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
             self.n_classes_ = len(self.classes_)
 
         else:
-            X, y = check_X_y(X, y, y_numeric=True)
+            X, y = check_X_y(X, y, y_numeric=True, force_all_finite = False)
 
         _, self.n_features_ = X.shape
 
