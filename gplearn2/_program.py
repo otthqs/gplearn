@@ -380,7 +380,7 @@ class _Program(object):
             while len(apply_stack[-1]) == apply_stack[-1][0].arity + 1:
                 # Apply functions that have sufficient arguments
                 function = apply_stack[-1][0]
-                if function in self.feature_function_set:
+                if function.name in [x.name for x in self.feature_function_set]:
                     terminals = [np.repeat(t, X.shape[0]) if isinstance(t, float)
                                  else X[:, t] if isinstance(t, int)
                                  else t for t in apply_stack[-1][1:-1]]
@@ -391,7 +391,7 @@ class _Program(object):
                                  else X[:, t] if isinstance(t, int)
                                  else t for t in apply_stack[-1][1:]]
 
-                if function in self.reshape_function_set:
+                if function.name in [x.name for x in self.reshape_function_set]:
                     terminals.append(self.mask)
 
                 intermediate_result = function(*terminals)
@@ -510,34 +510,35 @@ class _Program(object):
 
         for i in range(len(program)):
             if i < len(program):
-                if program[i] in self.feature_function_set:
-                    stack = 1
-                    start, end = i, i
+                if isinstance(program[i], _Function):
+                    if program[i].name in [x.name for x in self.feature_function_set]:
+                        stack = 1
+                        start, end = i, i
 
-                    while stack > end - start:
-                        temp_node = program[end]
-                        if isinstance(temp_node, _Function):
-                            stack += temp_node.arity
-                        end += 1
+                        while stack > end - start:
+                            temp_node = program[end]
+                            if isinstance(temp_node, _Function):
+                                stack += temp_node.arity
+                            end += 1
 
-                    temp_arity = []
-                    temp_program = []
-                    for j in range(start, end):
-                        temp_program.append(program[j])
+                        temp_arity = []
+                        temp_program = []
+                        for j in range(start, end):
+                            temp_program.append(program[j])
 
-                        if isinstance(program[j], _Function):
-                            temp_arity.append(program[j].arity)
+                            if isinstance(program[j], _Function):
+                                temp_arity.append(program[j].arity)
 
-                        else:
-                            temp_arity[-1] -= 1
-                            while temp_arity[-1] == 0:
-                                temp_arity.pop()
+                            else:
                                 temp_arity[-1] -= 1
+                                while temp_arity[-1] == 0:
+                                    temp_arity.pop()
+                                    temp_arity[-1] -= 1
 
-                        if temp_arity[0] == 1:
-                            temp_program.append(float(np.random.randint(1,21)))
-                            program = program[:start] + temp_program + program[end:]
-                            break
+                            if temp_arity[0] == 1:
+                                temp_program.append(float(np.random.randint(1,21)))
+                                program = program[:start] + temp_program + program[end:]
+                                break
             else: break
         return program
 
