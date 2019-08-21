@@ -8,7 +8,7 @@ computer programs.
 # Author: Trevor Stephens <trevorstephens.com>
 #
 # License: BSD 3 clause
-
+import gc
 import itertools
 from abc import ABCMeta, abstractmethod
 from time import time
@@ -561,6 +561,8 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
                 best_fitness = fitness[np.argmin(fitness)]
                 if best_fitness <= self.stopping_criteria:
                     break
+
+            _ = gc.collect()
 
         if isinstance(self, TransformerMixin):
             # Find the best individuals in the final generation
