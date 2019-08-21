@@ -100,7 +100,7 @@ def make_fitness(function, greater_is_better, wrap=True):
     return _Fitness(function=function,
                     greater_is_better=greater_is_better)
 
-
+# Add mask parameter in all builtin fitness functions modified by Qishun_Huang
 def _weighted_pearson(y, y_pred, w, mask):
     """Calculate the weighted Pearson correlation coefficient."""
     with np.errstate(divide='ignore', invalid='ignore'):

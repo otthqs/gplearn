@@ -8,6 +8,7 @@ computer programs.
 # Author: Trevor Stephens <trevorstephens.com>
 #
 # License: BSD 3 clause
+#import gc to release memory, import os shutil to build np.memmap modified by Qishun_Huang
 import gc
 import os
 import shutil
@@ -16,6 +17,7 @@ from abc import ABCMeta, abstractmethod
 from time import time
 from warnings import warn
 
+#import dump and load method to build np.memmap modified by Qishun_Huang
 import numpy as np
 from joblib import Parallel, delayed, dump, load
 from scipy.stats import rankdata
@@ -41,6 +43,7 @@ def _parallel_evolve(n_programs, parents, X, y, sample_weight, seeds, params):
     """Private function used to build a batch of programs within a job."""
     n_samples, n_features = X.shape
     # Unpack parameters
+    # add reshape_function_set, feature_function_set, mask modified by Qishun_Huang
     tournament_size = params['tournament_size']
     function_set = params['function_set']
     feature_function_set = params['feature_function_set']
@@ -170,7 +173,7 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
     Use derived classes instead.
 
     """
-
+#  add reshape_function_set, feature_function_set, mask   modified by Qishun_Huang
     @abstractmethod
     def __init__(self,
                  population_size=1000,
@@ -203,6 +206,7 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
                  verbose=0,
                  random_state=None):
 
+#add reshape_function_set, feature_function_set, mask   modified by Qishun_Huang
         self.population_size = population_size
         self.hall_of_fame = hall_of_fame
         self.n_components = n_components
@@ -321,6 +325,7 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
                                  % n_trim_classes)
             self.n_classes_ = len(self.classes_)
 
+# allow X-input as np.nan modified by Qishun_Huang
         else:
             X, y = check_X_y(X, y, y_numeric=True, force_all_finite = False)
 
@@ -430,6 +435,7 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
                 raise ValueError('Invalid arity for `transformer`. Expected 1, '
                                  'got %d.' % (self._transformer.arity))
 
+#add reshape_function_set, feature_function_set, mask   modified by Qishun_Huang
         params = self.get_params()
         params['_metric'] = self._metric
         if hasattr(self, '_transformer'):
@@ -476,6 +482,7 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
             # Print header fields
             self._verbose_reporter()
 
+# add np.memmap function before we call the parallel process modified by Qishun_Huang
         folder = './joblib_memmap'
         try:
             os.mkdir(folder)
@@ -504,6 +511,7 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
                 self.population_size, self.n_jobs)
             seeds = random_state.randint(MAX_INT, size=self.population_size)
 
+# change backend method from "locky" to "multiprocessing" modified by Qishun_Huang
             population = Parallel(n_jobs=n_jobs, backend = "multiprocessing",
                                   verbose=int(self.verbose > 1))(
                 delayed(_parallel_evolve)(n_programs[i],
@@ -578,6 +586,7 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
                 if best_fitness <= self.stopping_criteria:
                     break
 
+# use gc.collect. Remove folder using in np.memmap modified by Qishun_Huang
             _ = gc.collect()
 
         try:
@@ -1422,7 +1431,7 @@ class SymbolicTransformer(BaseSymbolic, TransformerMixin):
     .. [2] R. Poli, et al. "A Field Guide to Genetic Programming", 2008.
 
     """
-
+# add reshape_function_set, feature_function_set, mask   modified by Qishun_Huang
     def __init__(self,
                  population_size=1000,
                  hall_of_fame=100,

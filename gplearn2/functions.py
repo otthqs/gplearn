@@ -88,6 +88,7 @@ def make_function(function, name, arity, wrap=True):
     if not isinstance(wrap, bool):
         raise ValueError('wrap must be an bool, got %s' % type(wrap))
 
+# Ignore some rough check in the make function process modified by Qishun_Huang
     # Check output shape
     # args = [np.ones(10) for _ in range(arity)]
     # try:

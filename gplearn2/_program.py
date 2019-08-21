@@ -119,7 +119,7 @@ class _Program(object):
         The number of functions and terminals in the program.
 
     """
-
+# add: reshape_function_set, feature_function_set, mask   modified by Qishun_Huang
     def __init__(self,
                  function_set,
                  feature_function_set,
@@ -138,6 +138,7 @@ class _Program(object):
                  feature_names=None,
                  program=None):
 
+# add: reshape_function_set, feature_function_set, mask   modified by Qishun_Huang
         self.function_set = function_set
         self.feature_function_set = feature_function_set
         self.reshape_function_set = reshape_function_set
@@ -222,7 +223,7 @@ class _Program(object):
                 while terminal_stack[-1] == 0:
                     terminal_stack.pop()
                     if not terminal_stack:
-                        return self.post_pruning(program)
+                        return self.post_pruning(program)   # When initialization a program we do the post_pruning modified by Qishun_Huang
                     terminal_stack[-1] -= 1
 
         # We should never get here
@@ -380,6 +381,7 @@ class _Program(object):
             while len(apply_stack[-1]) == apply_stack[-1][0].arity + 1:
                 # Apply functions that have sufficient arguments
                 function = apply_stack[-1][0]
+                # execute the function in the new logic modified by Qishun_Huang
                 if function.name in [x.name for x in self.feature_function_set]:
                     terminals = [np.repeat(t, X.shape[0]) if isinstance(t, float)
                                  else X[:, t] if isinstance(t, int)
@@ -479,6 +481,7 @@ class _Program(object):
         y_pred = self.execute(X)
         if self.transformer:
             y_pred = self.transformer(y_pred)
+        # add mask parameters in raw_fitness modified by Qishun_Huang
         raw_fitness = self.metric(y, y_pred, sample_weight,self.mask)
 
         return raw_fitness
@@ -503,7 +506,7 @@ class _Program(object):
         penalty = parsimony_coefficient * len(self.program) * self.metric.sign
         return self.raw_fitness_ - penalty
 
-
+#   add post_pruning method modified by Qishun_Huang
     def post_pruning(self, program = None):
         if program is None:
             program = self.program
@@ -614,6 +617,7 @@ class _Program(object):
         donor_removed = list(set(range(len(donor))) -
                              set(range(donor_start, donor_end)))
         # Insert genetic material from donor
+        #Every time the program get changed we do post_pruning modified by Qishun_Huang
         return self.post_pruning((self.program[:start] +
                 donor[donor_start:donor_end] +
                 self.program[end:])), removed, donor_removed
@@ -642,6 +646,7 @@ class _Program(object):
         # Build a new naive program
         chicken = self.build_program(random_state)
         # Do subtree mutation via the headless chicken method!
+        #Every time the program get changed we do post_pruning modified by Qishun_Huang
         return self.post_pruning(self.crossover(chicken, random_state))
 
     def hoist_mutation(self, random_state):
@@ -672,6 +677,7 @@ class _Program(object):
         # Determine which nodes were removed for plotting
         removed = list(set(range(start, end)) -
                        set(range(start + sub_start, start + sub_end)))
+        #Every time the program get changed we do post_pruning modified by Qishun_Huang
         return self.post_pruning(self.program[:start] + hoist + self.program[end:]), removed
 
     def point_mutation(self, random_state):
@@ -720,7 +726,7 @@ class _Program(object):
                         raise ValueError('A constant was produced with '
                                          'const_range=None.')
                 program[node] = terminal
-
+        #Every time the program get changed we do post_pruning modified by Qishun_Huang
         return self.post_pruning(program), list(mutate)
 
     depth_ = property(_depth)
