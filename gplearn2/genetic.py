@@ -9,13 +9,15 @@ computer programs.
 #
 # License: BSD 3 clause
 import gc
+import os
+import shutil
 import itertools
 from abc import ABCMeta, abstractmethod
 from time import time
 from warnings import warn
 
 import numpy as np
-from joblib import Parallel, delayed
+from joblib import Parallel, delayed, dump, load
 from scipy.stats import rankdata
 from sklearn.base import BaseEstimator
 from sklearn.base import RegressorMixin, TransformerMixin, ClassifierMixin
@@ -474,6 +476,20 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
             # Print header fields
             self._verbose_reporter()
 
+        folder = './joblib_memmap'
+        try:
+            os.mkdir(folder)
+        except FileExistsError:
+            pass
+
+        X_filename_memmap = os.path.join(folder, 'X_memmap')
+        y_filename_memmap = os.path.join(folder, 'y_memmap')
+        dump(X, X_filename_memmap)
+        dump(y, y_filename_memmap)
+
+        X = load(X_filename_memmap, mmap_mode='r')
+        y = load(y_filename_memmap, mmap_mode='r')
+
         for gen in range(prior_generations, self.generations):
 
             start_time = time()
@@ -563,6 +579,12 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
                     break
 
             _ = gc.collect()
+
+        try:
+            shutil.rmtree(folder)
+        except:  # noqa
+            print('Could not clean-up automatically.')
+
 
         if isinstance(self, TransformerMixin):
             # Find the best individuals in the final generation
