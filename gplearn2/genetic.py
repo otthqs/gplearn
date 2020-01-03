@@ -76,6 +76,19 @@ def _parallel_evolve(n_programs, parents, X, y, sample_weight, seeds, params):
     # Build programs
     programs = []
 
+    # Change mask to dictionary. Check specific key to make sure the function of gplearn2
+    # Initially the keys includes 'fmt', 'rows', 'yfmt'
+
+    if 'yfmt' in mask:
+        y2 = y
+        y_adj = np.array([np.nan]) * len(mask['fmt']).astype(float)
+        y_adj[np.where(mask[0])] = y
+        y_adj.reshape(mask['rows'],-1)
+        y_adj = pd.DataFrame(y_adj)
+        y = y_adj.loc[mask['yfmt']]
+        y[y == np.pi] = np.nan
+
+
     for i in range(n_programs):
 
         random_state = check_random_state(seeds[i])
