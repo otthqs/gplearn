@@ -19,6 +19,7 @@ from warnings import warn
 
 #import dump and load method to build np.memmap modified by Qishun_Huang
 import numpy as np
+import pandas as pd
 from joblib import Parallel, delayed, dump, load
 from scipy.stats import rankdata
 from sklearn.base import BaseEstimator
@@ -76,18 +77,19 @@ def _parallel_evolve(n_programs, parents, X, y, sample_weight, seeds, params):
     # Build programs
     programs = []
 
+
     # Change mask to dictionary. Check specific key to make sure the function of gplearn2
     # Initially the keys includes 'fmt', 'rows', 'yfmt'
 
     if 'yfmt' in mask:
-        y2 = y
-        y_adj = np.array([np.nan]) * len(mask['fmt']).astype(float)
-        y_adj[np.where(mask[0])] = y
-        y_adj.reshape(mask['rows'],-1)
-        y_adj = pd.DataFrame(y_adj)
-        y = y_adj.loc[mask['yfmt']]
-        y[y == np.pi] = np.nan
+        y2 = np.array([np.nan] * len(mask['fmt'])).astype(float)
+        y2[np.where(mask['fmt'])] = y
+        y2 = pd.DataFrame(y2.reshape(mask['rows'],-1))
+        y2 = y2.loc[mask['yfmt']]
+        y2[y2 == np.pi] = np.nan
 
+    else:
+        y2 = y
 
     for i in range(n_programs):
 
@@ -168,10 +170,10 @@ def _parallel_evolve(n_programs, parents, X, y, sample_weight, seeds, params):
         curr_sample_weight[not_indices] = 0
         oob_sample_weight[indices] = 0
 
-        program.raw_fitness_ = program.raw_fitness(X, y, curr_sample_weight)
+        program.raw_fitness_ = program.raw_fitness(X, y2, curr_sample_weight)
         if max_samples < n_samples:
             # Calculate OOB fitness
-            program.oob_fitness_ = program.raw_fitness(X, y, oob_sample_weight)
+            program.oob_fitness_ = program.raw_fitness(X, y2, oob_sample_weight)
 
         programs.append(program)
 

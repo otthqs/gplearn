@@ -482,7 +482,11 @@ class _Program(object):
         if self.transformer:
             y_pred = self.transformer(y_pred)
         # add mask parameters in raw_fitness modified by Qishun_Huang
-        raw_fitness = self.metric(y, y_pred, sample_weight,self.mask)
+        if 'yfmt' in self.mask:
+            raw_fitness = self.metric(y, y_pred, self.mask)
+
+        else:
+            raw_fitness = self.metric(y, y_pred, sample_weight,self.mask)
 
         return raw_fitness
 
