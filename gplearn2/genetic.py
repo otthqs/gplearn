@@ -86,7 +86,7 @@ def _parallel_evolve(n_programs, parents, X, y, sample_weight, seeds, params):
         y2[np.where(mask['fmt'])] = y
         y2 = pd.DataFrame(y2.reshape(mask['rows'],-1))
         y2 = y2.loc[mask['yfmt']]
-        y2[y2 == np.pi] = np.nan
+        y2[y2 == -118] = np.nan
 
     else:
         y2 = y
