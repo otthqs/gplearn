@@ -91,6 +91,17 @@ def _parallel_evolve(n_programs, parents, X, y, sample_weight, seeds, params):
     else:
         y2 = y
 
+    if 'industrycode' in mask and 'uniind' in mask and 'yfmt' in mask:
+        y_tmp = pd.DataFrame(index = y2.index, columns = y2.columns)
+        industrycode = mask['industrycode'].loc[mask['yfmt']]
+        industrycode.index = y2.index
+        industrycode.columns = y2.columns
+        for each_num in mask['uniind']:
+            fmt_tmp = industrycode == each_num
+            y_tmp[fmt_tmp] = (y2[fmt_tmp].rank(axis = 1) - 0.5).div(y2[fmt_tmp].count(axis = 1), axis = 0)
+        y2 = y_tmp.astype(float)
+        
+
     for i in range(n_programs):
 
         random_state = check_random_state(seeds[i])
