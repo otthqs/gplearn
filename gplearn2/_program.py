@@ -382,7 +382,7 @@ class _Program(object):
                 # Apply functions that have sufficient arguments
                 function = apply_stack[-1][0]
                 # execute the function in the new logic modified by Qishun_Huang
-                if function.name in [x.name for x in self.feature_function_set]:
+                if function.name in self.feature_function_set:
                     terminals = [np.repeat(t, X.shape[0]) if isinstance(t, float)
                                  else X[:, t] if isinstance(t, int)
                                  else t for t in apply_stack[-1][1:-1]]
@@ -393,7 +393,7 @@ class _Program(object):
                                  else X[:, t] if isinstance(t, int)
                                  else t for t in apply_stack[-1][1:]]
 
-                if function.name in [x.name for x in self.reshape_function_set]:
+                if function.name in self.reshape_function_set:
                     terminals.append(self.mask)
 
                 intermediate_result = function(*terminals)
@@ -518,7 +518,7 @@ class _Program(object):
         for i in range(len(program)):
             if i < len(program):
                 if isinstance(program[i], _Function):
-                    if program[i].name in [x.name for x in self.feature_function_set]:
+                    if program[i].name in self.feature_function_set:
                         stack = 1
                         start, end = i, i
 

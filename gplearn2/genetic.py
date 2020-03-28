@@ -9,9 +9,9 @@ computer programs.
 #
 # License: BSD 3 clause
 #import gc to release memory, import os shutil to build np.memmap modified by Qishun_Huang
-import gc
-import os
-import shutil
+# import gc
+# import os
+# import shutil
 import itertools
 from abc import ABCMeta, abstractmethod
 from time import time
@@ -100,7 +100,7 @@ def _parallel_evolve(n_programs, parents, X, y, sample_weight, seeds, params):
             fmt_tmp = industrycode == each_num
             y_tmp[fmt_tmp] = (y2[fmt_tmp].rank(axis = 1) - 0.5).div(y2[fmt_tmp].count(axis = 1), axis = 0)
         y2 = y_tmp.astype(float)
-        
+
 
     for i in range(n_programs):
 
@@ -509,19 +509,19 @@ class BaseSymbolic(BaseEstimator, metaclass=ABCMeta):
             self._verbose_reporter()
 
 # add np.memmap function before we call the parallel process modified by Qishun_Huang
-        folder = './joblib_memmap'
-        try:
-            os.mkdir(folder)
-        except FileExistsError:
-            pass
-
-        X_filename_memmap = os.path.join(folder, 'X_memmap')
-        y_filename_memmap = os.path.join(folder, 'y_memmap')
-        dump(X, X_filename_memmap)
-        dump(y, y_filename_memmap)
-
-        X = load(X_filename_memmap, mmap_mode='r')
-        y = load(y_filename_memmap, mmap_mode='r')
+        # folder = './joblib_memmap'
+        # try:
+        #     os.mkdir(folder)
+        # except FileExistsError:
+        #     pass
+        #
+        # X_filename_memmap = os.path.join(folder, 'X_memmap')
+        # y_filename_memmap = os.path.join(folder, 'y_memmap')
+        # dump(X, X_filename_memmap)
+        # dump(y, y_filename_memmap)
+        #
+        # X = load(X_filename_memmap, mmap_mode='r')
+        # y = load(y_filename_memmap, mmap_mode='r')
 
         for gen in range(prior_generations, self.generations):
 
